@@ -12,7 +12,7 @@ router.post("/create", async(req, res) => {
     const product = await prisma.product.create({
         data: {name, stock, price}
     })
-    return res.status(201).send({product});
+    return res.status(201).send({id: product.id, name: product.name, stock: product.stock, price: product.price});
 })
 
 router.get("/get", async(req, res) => {
@@ -30,16 +30,7 @@ router.get("/getById/:id", async(req, res) => {
 
 router.put("/put/:id", async(req, res) => {
     const {id} = req.params;
-    const {name, stock , price} = req.body;
-    if (!name && !price && stock) {
-        const product = await prisma.product.update({
-            where: {
-                id: Number(id)
-            },
-            data: {stock}
-        })
-        return res.status(200).send(product);
-    }
+    const {name, stock, price } = req.body;
     if (name && stock && price) {
         const product1 = await prisma.product.update({
             where: {
@@ -48,6 +39,20 @@ router.put("/put/:id", async(req, res) => {
             data: {name, stock, price}
         })
         return res.status(200).send(product1);
+    }
+})
+
+router.patch("/patch/:id", async(req, res) => {
+    const {id} = req.params;
+    const {stock } = req.body;
+    if (stock) {
+        const product = await prisma.product.update({
+            where: {
+                id: Number(id)
+            },
+            data: {stock}
+        })
+    return res.status(200).send(product);
     }
 })
 
